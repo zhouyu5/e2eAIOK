@@ -50,7 +50,7 @@ lora_model = get_peft_model(model, config)
 # delatuner optimize the model with best lora layer configuration
 + import deltatuner
 + deltatuner_config = {"algo": "lora", "denas": True, "best_model_structure": f"/path/to/best_structure.jsonl"}
-+ deltatuner_model = deltatuner.optimize(lora_model, **deltatuner_config)
++ deltatuner_model = deltatuner.optimize(lora_model, tokenizer, **deltatuner_config)
 ...
 ```
 
