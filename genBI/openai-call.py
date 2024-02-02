@@ -1,4 +1,5 @@
 import openai
+import time
 
 openai.api_key = "EMPTY"
 openai.base_url = "http://127.0.0.1:8000/v1/"
@@ -207,6 +208,7 @@ Based on your instructions, here is the SQL query I have generated to answer the
 """
 
 
+start_time = time.time()
 
 # create a chat completion
 completion = openai.chat.completions.create(
@@ -216,6 +218,10 @@ completion = openai.chat.completions.create(
   top_p=0.3,
   messages=[{"role": "user", "content": prompt}]
 )
+
+time_taken = time.time() - start_time
+print(f'query time takes: {time_taken}s')
+
 # print the completion
 print(completion)
 print(completion.choices[0].message.content)

@@ -28,11 +28,10 @@ embedding = HuggingFaceEmbeddings(
 
 documents = JSONLoader(file_path='schema.jsonl', jq_schema='.meta_data', text_content=False, json_lines=True).load()
 db = FAISS.from_documents(documents=documents, embedding=embedding)
-retriever = db.as_retriever(search_type='mmr', search_kwargs={'k': 5, 'lambda_mult': 1})
 
 
 with open(db_filename, 'wb') as f:
-    pickle.dump(retriever, f)
+    pickle.dump(db, f)
 
 time_taken = time.time() - start_time
 logger.info(f'index time takes: {time_taken}s')

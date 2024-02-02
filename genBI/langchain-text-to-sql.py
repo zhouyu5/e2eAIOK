@@ -6,6 +6,7 @@ from langchain.prompts.chat import SystemMessagePromptTemplate
 from langchain.prompts.chat import HumanMessagePromptTemplate
 from langchain.prompts.chat import ChatPromptTemplate
 from langchain.schema import HumanMessage, SystemMessage
+from langchain_community.callbacks import get_openai_callback
 import logging
 import time
 import pickle
@@ -21,6 +22,7 @@ os.environ['OPENAI_API_BASE'] = "http://127.0.0.1:8000/v1/"
 model = "sqlcoder-v2"
 db_filename = 'retriever.db'
 emb_model_name = "/root/qyao/gitspace/llm-on-ray/model_store/sqlcoder"
+top_k_table = 1
 query = "How many distinct actors last names are there?"
 logger.info(f'query model:{model}, embedding model: {emb_model_name}, question: {query}')
 
@@ -34,7 +36,8 @@ llm = ChatOpenAI(
 )
 
 with open(db_filename, 'rb') as f:
-    retriever = pickle.load(f)
+    db = pickle.load(f)
+retriever = db.as_retriever(search_type='mmr', search_kwargs={'k': top_k_table, 'lambda_mult': 1})
 
 ######################################################################################
 start_time = time.time()
@@ -87,11 +90,12 @@ message = generate_prompt(matched_tables, query)
 
 logger.info(f'message: {message}')
 
-response = llm(message)
-
-time_taken = time.time() - start_time
-
-print(response)
+with get_openai_callback() as cb:
+    response = llm.invoke(message)
+    time_taken = time.time() - start_time
+    logger.info(f'the matched schema: {matched_tables}')
+    logger.info('tracking token usage')
+    logger.info(cb)
 
 logger.info(f'response: {response}')
 logger.info(f'query time takes: {time_taken}s')
