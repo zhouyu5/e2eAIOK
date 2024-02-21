@@ -30,8 +30,7 @@ documents = JSONLoader(file_path='schema.jsonl', jq_schema='.meta_data', text_co
 db = FAISS.from_documents(documents=documents, embedding=embedding)
 
 
-with open(db_filename, 'wb') as f:
-    pickle.dump(db, f)
+db.save_local(db_filename)
 
 time_taken = time.time() - start_time
 logger.info(f'index time takes: {time_taken}s')
