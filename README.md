@@ -1,4 +1,4 @@
-# RecSys Reference Kit
+# CTR 
 Offering leading RecSys development tools/models and use cases, aiming to boost productivity/performance in creating recsys solution. It embrace Hugging Face community and fully compatible with Hugging Face Library.
 
 ## Quick Link
