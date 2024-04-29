@@ -1,0 +1,23 @@
+services:
+  triton-server-cpu:
+    volumes: 
+      - ../src:/src/
+      - ../../../../:/recsys_refkits/
+      - ${USECASE_PATH}/src/:/src/app
+      - ${USECASE_PATH}/model_store:/model_repository
+      - ${USECASE_PATH}/feat:/feature_store
+    working_dir: /src/app/
+    command:
+      - /bin/bash
+      - -c
+      - |
+        pip install -r requirements.txt
+        bash install_model.sh
+        tritonserver --model-repository=/model_repository
+    container_name: triton-server-cpu
+    image: nvcr.io/nvidia/tritonserver:23.11-py3
+    network_mode: "host"
+    environment:
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
+      - PYTHONUNBUFFERED=1

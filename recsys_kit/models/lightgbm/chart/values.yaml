@@ -1,0 +1,14 @@
+metadata:
+  name: classic-ml
+image:
+  name: 'xuechendi/lgbm-image'
+  #name: 'ubuntu:22.04'
+autoscaling:
+  minReplicas: 1
+server:
+  name: lgbm-inference-server
+cmdline:
+  job: 
+  - cd /apps/classic-ml/ && python cli.py --mode train --setting app/config.yaml
+  serve: 
+  - cd /apps/classic-ml/ && python cli.py --mode infer --setting serve/config.yaml

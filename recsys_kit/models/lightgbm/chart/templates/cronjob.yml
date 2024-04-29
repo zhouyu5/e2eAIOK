@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.metadata.name }}
+spec:
+  schedule: "0 0 1 1 *"
+  replicas: 1
+  jobTemplate:
+      spec:
+        template:
+          spec:
+            restartPolicy: OnFailure
+            volumes:
+            - name: app-disk
+              persistentVolumeClaim:
+                claimName: task-pv-claim
+            containers:
+            - name: autofe
+              image: "{{ .Values.image.name }}"
+              command:
+              - /bin/bash
+              - -c
+              args:
+              - cd /app && python app.py
+              volumeMounts:
+                - mountPath: /app
+                  name: app-disk

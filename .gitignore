@@ -7,3 +7,14 @@
 **/__pycache__
 **/.ipynb_checkpoints
 **/dist
+
+
+
+**/*.csv
+**/*.parquet
+**/*.zip
+**/*.pyc
+**/*.ipynb_checkpoints
+checkpoint/
+*.egg-info/
+*data

@@ -1,0 +1,38 @@
+name: "prediction"
+backend: "fil"
+max_batch_size: 32768
+input [
+ {
+    name: "input__0"
+    data_type: TYPE_FP32
+    dims: [ 106 ]
+  }
+]
+output [
+ {
+    name: "output__0"
+    data_type: TYPE_FP32
+    dims: [ 2 ]
+  }
+]
+instance_group [{ kind: KIND_AUTO }]
+parameters [
+  {
+    key: "model_type"
+    value: { string_value: "lightgbm" }
+  },
+  {
+    key: "predict_proba"
+    value: { string_value: "true" }
+  },
+  {
+    key: "output_class"
+    value: { string_value: "true" }
+  },
+  {
+    key: "threshold"
+    value: { string_value: "0.5" }
+  }
+]
+
+dynamic_batching {}

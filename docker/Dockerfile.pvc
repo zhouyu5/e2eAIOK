@@ -1,0 +1,9 @@
+ARG PYT_BASE_IMAGE="intel/intel-extension-for-pytorch"
+ARG PYT_BASE_TAG="2.1.10-xpu-pip-base"
+
+FROM ${PYT_BASE_IMAGE}:${PYT_BASE_TAG}
+
+COPY ./pyproject.toml .
+
+ARG dependencies_tag="pytorch"
+RUN pip install -e .[${dependencies_tag}]

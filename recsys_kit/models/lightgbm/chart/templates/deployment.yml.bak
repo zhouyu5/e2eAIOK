@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.metadata.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLables:
+      app: {{ .Values.server.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.server.name }}
+    spec:
+      volumes:
+      - name: app-disk
+        persistentVolumeClaim:
+          claimName: task-pv-claim
+      containers:
+      - name: autofe
+        image: "{{ .Values.image.name }}"
+        volumeMounts:
+          - mountPath: /apps/
+            name: app-disk
+        args: {{ .Values.cmdline.serve }}
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            memory: "300Gi"
+            cpu: "64"
+          limits:
+            memory: "480Gi"
+            cpu: '128'

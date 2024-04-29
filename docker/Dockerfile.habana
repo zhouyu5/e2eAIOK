@@ -1,0 +1,13 @@
+ARG PYT_BASE_IMAGE="vault.habana.ai/gaudi-docker/1.14.0/ubuntu22.04/habanalabs/pytorch-installer-2.1.1"
+ARG PYT_BASE_TAG="latest"
+FROM ${PYT_BASE_IMAGE}:${PYT_BASE_TAG}
+
+COPY ./pyproject.toml .
+
+ENV PYTHON=/usr/bin/python3.10
+
+RUN pip install --upgrade-strategy eager optimum[habana]
+
+ARG dependencies_tag="pytorch"
+RUN pip install -e .[${dependencies_tag}]
+    

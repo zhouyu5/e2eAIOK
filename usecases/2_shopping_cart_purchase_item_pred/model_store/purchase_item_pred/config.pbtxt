@@ -1,0 +1,34 @@
+name: "purchase_item_pred"
+backend: "python"
+max_batch_size: 256
+input [
+  {
+    name: "input__0"
+    data_type: TYPE_INT64
+    dims: [ 1 ]
+  },
+  {
+    name: "input__1"
+    data_type: TYPE_INT64
+    dims: [ 1 ]
+  },
+  {
+    name: "input__2"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+output [
+  {
+    name: "session_id"
+    data_type: TYPE_INT64
+    dims: [ 1 ]
+  },
+  {
+    name: "recommended_items"
+    data_type: TYPE_INT64
+    dims: [ 100 ]
+  }
+]
+
+instance_group [{ kind: KIND_AUTO }]

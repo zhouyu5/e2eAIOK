@@ -1,0 +1,29 @@
+services:
+  recsys24-train:
+    build:
+      args: 
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+      dockerfile: dockerfile-python
+      context: ./
+    volumes:
+      - ../src:/src/
+      - ${USECASE_PATH}/src:/src/app
+      - ${USECASE_PATH}/dataset:/dataset
+      - ${USECASE_PATH}/output:/output
+      - ${USECASE_PATH}/feat:/feature_store
+    working_dir: /src/app
+    command:
+      - /bin/bash
+      - -c
+      - |
+        pip install -r requirements.txt
+        python -u dataprep/data_prepare.py --train
+        python -u train/train.py
+    container_name: recsys24-train
+    image: recsys24-train-image
+    network_mode: "host"
+    environment:
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
+      - PYTHONUNBUFFERED=1

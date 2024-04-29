@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.metadata.name }}
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      volumes:
+      - name: app-disk
+        persistentVolumeClaim:
+          claimName: task-pv-claim
+      containers:
+      - name: autofe
+        image: "{{ .Values.image.name }}"
+        envFrom:
+          - configMapRef:
+              name: proxy-config
+        command:
+        - /bin/bash
+        - -c
+        args: {{ .Values.cmdline.job }}
+        volumeMounts:
+          - mountPath: /apps
+            name: app-disk
+        resources:
+          requests:
+            memory: "300Gi"
+            cpu: "64"
+          limits:
+            memory: "480Gi"
+            cpu: '128'

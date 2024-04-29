@@ -1,0 +1,33 @@
+@startuml TrainingWorkflow
+title Training workflow
+actor User as user
+participant RecSysKit.train as train_entry
+participant RecSysKit.models as model
+database PreprocessedDataset as dataset
+participant RecSysKit.metrics as metric
+participant ChosenTrainer as trainer
+
+==Load args==
+user -> train_entry: config.json + train_config.json
+user -> train_entry: gaudi_config.json (optional)
+==Initilize Hugging Face Style Model==
+train_entry -> model: AutoModel.from_config(config)
+model --> train_entry 
+==Load preprocessed dataset==
+train_entry -> dataset: datasets.load_from_disk()
+dataset --> train_entry
+==Prepare metrics==
+train_entry -> metric: metric_func = compute_metrics()
+metric --> train_entry
+==Launch Training and evaluating==
+alt use_hpu
+    train_entry -> trainer: GaudiTrainer.train()
+else use_cpu or use_gpu
+    train_entry -> trainer: NormalTrainer.train()
+trainer -> train_entry: chosen_trainer.save_metric()
+trainer -> train_entry: chosen_trainer.save_model()
+end
+train_entry --> user: saved_model
+train_entry --> user: evaluate metric
+
+@enduml

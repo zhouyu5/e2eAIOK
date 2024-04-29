@@ -1,0 +1,31 @@
+services:
+  sihg4sr-train:
+    build:
+      args: 
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+      dockerfile: dockerfile-python
+      context: ./
+    volumes:
+      - ../src:/src/
+      - ../../../../:/recsys_refkits/
+      - ${USECASE_PATH}/src:/src/app
+      - ${USECASE_PATH}/dataset:/dataset
+      - ${USECASE_PATH}/output:/output
+      - ${USECASE_PATH}/feat:/feature_store
+    working_dir: /src/app
+    command:
+      - /bin/bash
+      - -c
+      - |
+        pip install -q -r requirements.txt
+        bash install_model.sh
+        python -u dataprep/data_prepare.py --data_dir /dataset/dressipi_recsys2022_dataset --feat_dir /feature_store --save_dir /output --train
+        python -u train/cli.py --dataset-dir /output/processed/  --feat-dir /feature_store --save-path /output/saved_models --epochs 1 --extra --use-recent-n-month 5
+    container_name: dgl-cpu-container
+    image: dgl-cpu-image
+    network_mode: "host"
+    environment:
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
+      - PYTHONUNBUFFERED=1
